@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: app_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"         # porta_do_seu_pc:porta_do_container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # dados persistem entre restarts
+
+  backend:
+    container_name: app_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app           # sincroniza seu código com o container (hot reload)
+      - /app/node_modules        # preserva o node_modules do container
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/appdb
+    depends_on:
+      - postgres                 # espera o postgres subir antes
+    command: npm run start:dev
+
+  frontend:
+    container_name: app_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app          # sincroniza seu código (hot reload)
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:                 # volume nomeado = dados do banco não somem
