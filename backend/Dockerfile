@@ -7,7 +7,8 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma generate
+
 EXPOSE 3000
 
-# Gera o client e sobe o servidor
-CMD ["sh", "-c", "npx prisma generate && npm run start:dev"]
+CMD ["npm", "run", "start:dev"]
