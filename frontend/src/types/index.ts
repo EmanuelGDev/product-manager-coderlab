@@ -24,4 +24,9 @@ export interface CreateProductPayload {
   categoryIds: number[];
 }
 
-export type UpdateProductPayload = Partial<CreateProductPayload>;
+export interface CreateCategoryPayload {
+  name: string;
+  parentId?: number | null;
+}
+
+export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
